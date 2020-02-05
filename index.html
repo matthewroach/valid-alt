@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Valid ALT text?</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="css/reset.css">
+	<link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+	<main class="container">
+		<h1>Valid ALT</h1>
+
+		<p>
+			Addy Osmani tweeted the other day the following:
+		</p>
+
+		<blockquote class="twitter-tweet">
+			<p lang="en" dir="ltr">Tip: highlight images missing alt text with img:not([alt]) <a
+					href="https://t.co/zgjdE5iTU6">pic.twitter.com/zgjdE5iTU6</a></p>&mdash; Addy Osmani (@addyosmani) <a
+				href="https://twitter.com/addyosmani/status/1223872295619330048?ref_src=twsrc%5Etfw">February 2, 2020</a>
+		</blockquote>
+		<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+		<p>
+			This left me thinking, this only provides insight into examples of
+			when the `alt` attribute is missing altogther, but what about use
+			cases for examples in React when the alt text is present and not
+			containing any information.	Yes, you are correct in saying this
+			is a valid use case if the image is for decorative, but what about
+			the cases where you are	using a component that is setup to output
+			the value based on a property passed in from another component.
+			We can also provide insight into images that are on the page that
+			have an alt attribute but does not contain a value. By adding a
+			small helper in our CSS we can provide a user with a "warning" of
+			images that have alt but no value, so they are able to quicky see
+			if that's correct behaviour for a given image.
+		</p>
+
+		<p>
+			By providing a warning style, below you will see an orange border
+			around images that have an alt attribute but no value we can quickly
+			identify what is known as decorative images, and then see if they are
+			all decorative images.
+		</p>
+
+		<p>
+			For example in a web application where a developer is using a utility
+			function to display and image/graphic and assumes the alt text is
+			being set based on them passing a value, or even if they are just
+			passing an object of data from a API or other datasource. Example
+			of a CMS, where the UI is built in React and you just pass the
+			image data from the API into your component - the issue here is you
+			are hoping the admin/editor added the alt text in the photo/media
+			library tool.
+		</p>
+
+		<p>
+			See the example below, showing how the utility function is set up so
+			the alt value defaults to a blank string. If an API key is missing this
+			accounts for that and will not cause issues.
+		</p>
+
+		<hr />
+
+		<h3>Code Example</h3>
+		<pre>
+			<code>
+// Simple Image Component
+const Image = ({src, alt=""}) => &lt;img src={src} alt={alt} /&gt;
+
+
+// example payload from an API/Datasource
+const imageObject = {
+	src: 'https://picsum.photos/id/233/200/200',
+	alt: '',
+};
+
+// Passing the payload straight to the component for rendering
+&lt;Image {...imageObject} /&gt;</code>
+		</pre>
+
+		<h3>CSS</h3>
+
+		<pre>
+			<code>
+// Error - missing alt
+img:not([alt]) {
+	border: 5px solid rgb(255, 0, 0);
+}
+
+// Warning - Has alt attribute but no text value
+img[alt=''] {
+	border: 5px solid rgb(255, 165, 0);
+}</code></pre>
+
+		<hr />
+
+
+		<h2>React Demo</h2>
+
+		<div id="react" class="react-example"></div>
+
+	</main>
+
+	<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+	<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+	<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+	<script type="text/babel">
+		const imageObject = {
+			src: 'https://picsum.photos/id/233/200/200',
+			alt: '',
+		};
+		const Image = ({ src, alt="" }) => <img src={src} alt={alt} />
+
+		const Component = () => <>
+			<Image src="https://picsum.photos/id/23/200/200" alt={null} />
+			<Image {...imageObject} />
+			<Image src="https://picsum.photos/id/237/200/200" alt="Black Labrador Puppy" />
+		</>;
+
+		ReactDOM.render(<Component />, document.getElementById('react'));
+	</script>
+</body>
+
+</html>
